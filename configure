@@ -1,0 +1,23 @@
+#!/bin/sh
+set -e
+
+# Trivial function to fetch a library
+fetch_lib() {
+    echo "Fetching $1 from $2"
+    curl -Lo $1.tar.gz "$2"
+    (mkdir $1 && cd $1 && tar -xzf ../$1.tar.gz --strip-components=1)
+}
+#rm -rf lib && mkdir lib && cd lib
+
+# Fetch dependencies
+#fetch_lib pottery https://github.com/ludocode/pottery/archive/e04784d4d01b6513486798699fbbe279bec85a79.tar.gz
+#cd ..
+
+# Pass --debug to get a debug build
+if [ "$1" == "--debug" ]; then
+    echo "Configuring for debug"
+    echo "CFLAGS += -O0 -DDEBUG" > config.mk
+else
+    echo "Configuring for release"
+    echo "CFLAGS += -O3 -funroll-loops -flto -DNDEBUG" > config.mk
+fi
